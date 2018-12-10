@@ -57,6 +57,7 @@ price_list = []
 for price in titles:
     price_list.append(price.text)
 print(price_list)
+afdsasdf
     
 
 driver.quit()
