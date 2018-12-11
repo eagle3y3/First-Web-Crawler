@@ -7,12 +7,14 @@ Created on Dec 9, 2018
 import requests
 import time
 from bs4 import BeautifulSoup as bs
+import json
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import TimeoutException
+from cssselect.parser import Class
 
  
 
@@ -24,18 +26,19 @@ page_soup = bs(res.text, "html.parser")
 
 
 containers = page_soup.findAll("div", {"class": "gl-product-card-container show-variation-carousel"})
-
-
 print(len(containers))
 #for each container find shoe model
-shoe_colors = []
 
-
-for container in containers:
-    if container.find("div", {'class': 'gl-product-card__reviews-number'}) is not None:
-        shoe_model = container.div.div.img["title"]
-        review = container.find('div', {'class':'gl-product-card__reviews-number'})
-        review = int(review.text)
+start_url = 'https://www.adidas.com/api/search/taxonomy?sitePath=us&query=men-new_arrivals'
+response = requests.get(start_url, headers = headers)
+source = response.text
+data = json.loads(source)
+for shoe in data['itemList']['items']:
+    shoe_model = shoe['displayName']
+    shoe_color = shoe['color']
+    rating = shoe['rating']
+    rating_count = shoe['ratingCount']
+    print(shoe_model, shoe_color, rating)
   
     
 #Goes headless in selenium using url
@@ -57,8 +60,5 @@ price_list = []
 for price in titles:
     price_list.append(price.text)
 print(price_list)
-afdsasdf
-    
 
 driver.quit()
-      
